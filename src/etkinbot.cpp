@@ -5,7 +5,7 @@ Yerleşik özellikler;
 
 # 2 adet encoderli Mikro dc motor ** motor 1
 # Kullanıcı butonu
-# Buzzer
+# Buzzer **
 # RGB Led ***
 # Çizgi izleme sensörleri
 # Geliştirme Pinleri
