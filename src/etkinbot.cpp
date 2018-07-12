@@ -35,6 +35,8 @@ arge@etkinketnolojiler.com
 
 #include "etkinbot.h"
 
+
+
 uint8_t trig = 13;
 uint8_t echo = 12;
 uint8_t motor1_dir = 16;
@@ -57,12 +59,15 @@ EtkinClass::EtkinClass(){
 	pinMode(rgb_green, OUTPUT); //cizildi
 	pinMode(rgb_blue, OUTPUT); //cizildi
 	//encoder eklenecek
+	PID myPID1(&InputMotor1, &OutputMotor1, &SetpointMotor1, Kp, Ki, Kd, DIRECT);
+	PID myPID2(&InputMotor2, &OutputMotor2, &SetpointMotor2, Kp, Ki, Kd, DIRECT);
 
-   level = 0;
-	 distance = 0;
-	 duration = 0;
-	 line_left = 0;
-	 line_right = 0;
+	sei();
+	level = 0;
+	distance = 0;
+	duration = 0;
+	line_left = 0;
+	line_right = 0;
 
 }
 
@@ -163,6 +168,34 @@ void EtkinClass::move(int direction, int speed){
 	analogWrite(motor1_pwm, speed);
   analogWrite(motor2_pwm, speed);
 }
+void EtkinClass::movePid(uint8_t direction, int speed, int distance)
+{
+
+	Setpoint = motor_speed_theoric;
+	Setpoint1 = motor_speed_theoric;
+	EtkinClass::move(direction, speed)
+	digitalWrite(rgb_red, LOW);
+	digitalWrite(rgb_green, LOW);
+	digitalWrite(rgb_blue, LOW);
+
+	while (1)
+  {
+    Input1 = map(motor_speed1, 0, 420, 0, 1023);
+    Input = map(motor_speed, 0, 420, 0, 1023);
+    myPID1.Compute();
+    myPID2.Compute();
+
+
+    pwmWriteDistance(Output, Output1, direction, (distance / 2.953));
+    speed_control();
+		if(Output1 == 0 && Output == 0)
+		{
+			break;
+		}
+  }
+}
+
+
 bool EtkinClass::joystick(int data){
 	if(data==1){
 		if(analogRead(A0)>650){

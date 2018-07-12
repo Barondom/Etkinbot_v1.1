@@ -3,6 +3,7 @@
 #define etkinbot_h
 
 #include <Arduino.h>
+#include "PID_v1.h"
 ///@brief Class for EtkinClass
 class EtkinClass
 {
