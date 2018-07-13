@@ -119,7 +119,7 @@ void setup()
   myPID2.SetMode(AUTOMATIC);
   myPID1.SetOutputLimits(0, 255);
   myPID2.SetOutputLimits(0, 255);
-  
+
   ////////////////////////////////////////////////////////////////////// Giriş Çıkış Ayarları
   pinMode(2, INPUT);
   pinMode(3, INPUT);

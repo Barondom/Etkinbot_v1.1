@@ -36,21 +36,93 @@ arge@etkinketnolojiler.com
 #include "etkinbot.h"
 
 
+int counter=0, counter1=0;
+double timer0, timer1, timer2, timer3, timer4, timer5;
+double timer6, timer7;
+double motor_speed=0, motor_speed1=0;
+int motor_speed_theoric;
 
-uint8_t trig = 13;
-uint8_t echo = 12;
-uint8_t motor1_dir = 16;
-uint8_t motor2_dir = 4;
-uint8_t motor1_pwm = 10;
-uint8_t motor2_pwm = 11;
-uint8_t rgb_red = 6;
-uint8_t rgb_green = 5;
-uint8_t rgb_blue = 9;
-uint8_t cny70_R = A6;
-uint8_t cny70_L = A3;
+ISR(INT0_vect)
+{
+	timer0 = micros();
+	if (counter == 0)
+	{
+		timer1 = timer0;
+	}
 
+	counter++;
+
+	if (counter == 7)
+	{
+    	if (timer0 > timer1)
+    	{
+      		timer2 = timer0 - timer1;
+			motor_speed = timer2 / 1000;
+			motor_speed = motor_speed / 1000;
+			motor_speed = 60 / motor_speed;
+			motor_speed = motor_speed / 50;
+
+			if (motor_speed > motor_speed1)
+			{
+			  Setpoint = map(motor_speed1, 0, 420, 0, 1023);
+			}
+			else
+			{
+			  Setpoint = motor_speed_theoric;
+			}
+    	}
+		counter = 0;
+		distance1++;
+	}
+}
+
+ISR(INT1_vect)
+{
+	timer3 = micros();
+	if (counter1 == 0)
+	{
+		timer3 = timer4;
+	}
+
+	counter++;
+
+	if (counter1 == 7)
+	{
+    	if (timer3 > timer4)
+    	{
+      		timer5 = timer3 - timer4;
+			motor_speed = timer5 / 1000;
+			motor_speed = motor_speed1 / 1000;
+			motor_speed = 60 / motor_speed1;
+			motor_speed = motor_speed1 / 50;
+
+			if (motor_speed1 > motor_speed)
+			{
+			  Setpoint = map(motor_speed, 0, 420, 0, 1023);
+			}
+			else
+			{
+			  Setpoint = motor_speed_theoric;
+			}
+    	}
+		counter1 = 0;
+		distance2++;
+	}
+}
 
 EtkinClass::EtkinClass(){
+	trig = 13;
+	echo = 12;
+	motor1_dir = 16;
+	motor2_dir = 4;
+	motor1_pwm = 10;
+	motor2_pwm = 11;
+	rgb_red = 6;
+	rgb_green = 5;
+	rgb_blue = 9;
+	cny70_R = A6;
+	cny70_L = A3;
+
 	pinMode(motor1_dir, OUTPUT); //cizildi
 	pinMode(motor2_dir, OUTPUT); //cizildi blue rgb
 	pinMode(motor1_pwm, OUTPUT); //cizildi
@@ -58,9 +130,19 @@ EtkinClass::EtkinClass(){
 	pinMode(rgb_red, OUTPUT); //cizildi red rgb
 	pinMode(rgb_green, OUTPUT); //cizildi
 	pinMode(rgb_blue, OUTPUT); //cizildi
-	//encoder eklenecek
-	PID myPID1(&InputMotor1, &OutputMotor1, &SetpointMotor1, Kp, Ki, Kd, DIRECT);
-	PID myPID2(&InputMotor2, &OutputMotor2, &SetpointMotor2, Kp, Ki, Kd, DIRECT);
+
+	Kp = 0.002;
+	Ki = 3;
+	Kd = 0.001;
+
+	myPID1 = new PID(&InputMotor1, &OutputMotor1, &SetpointMotor1, Kp, Ki, Kd, DIRECT);
+	myPID2 = new PID(&InputMotor2, &OutputMotor2, &SetpointMotor2, Kp, Ki, Kd, DIRECT);
+
+	myPID1->SetMode(AUTOMATIC);
+	myPID2->SetMode(AUTOMATIC);
+
+	myPID1->SetOutputLimits(AUTOMATIC);
+	myPID2->SetOutputLimits(AUTOMATIC);
 
 	sei();
 	level = 0;
@@ -110,12 +192,14 @@ int EtkinClass::linesensor(){
 		return 0;
 	}
 }
+/*ledcolor()***********************************************************/
 void EtkinClass::ledcolor(int red, int green, int blue){
 	analogWrite(rgb_blue, blue);
 	analogWrite(rgb_green, green);
 	analogWrite(rgb_red, red);
 
 }
+/*motor()*************************************************************/
 void EtkinClass::motor(int motor_id, int speed){
 	if (motor_id == 1) {
 		if (speed < 0) {
@@ -144,6 +228,7 @@ void EtkinClass::motor(int motor_id, int speed){
 		analogWrite(motor2_pwm, speed);
 	}
 }
+/*move()***********************************************************/
 void EtkinClass::move(int direction, int speed){
 
 /*
@@ -166,7 +251,7 @@ void EtkinClass::move(int direction, int speed){
 		digitalWrite(motor2_dir, LOW);
 	}
 	analogWrite(motor1_pwm, speed);
-  analogWrite(motor2_pwm, speed);
+  	analogWrite(motor2_pwm, speed);
 }
 void EtkinClass::movePid(uint8_t direction, int speed, int distance)
 {
@@ -182,8 +267,8 @@ void EtkinClass::movePid(uint8_t direction, int speed, int distance)
   {
     Input1 = map(motor_speed1, 0, 420, 0, 1023);
     Input = map(motor_speed, 0, 420, 0, 1023);
-    myPID1.Compute();
-    myPID2.Compute();
+    myPID1->Compute();
+    myPID2->Compute();
 
 
     pwmWriteDistance(Output, Output1, direction, (distance / 2.953));
@@ -195,7 +280,7 @@ void EtkinClass::movePid(uint8_t direction, int speed, int distance)
   }
 }
 
-
+/*joystick()**********************************************************/
 bool EtkinClass::joystick(int data){
 	if(data==1){
 		if(analogRead(A0)>650){
@@ -223,4 +308,26 @@ bool EtkinClass::joystick(int data){
 		else return false;
 	}
 
+}
+/*initINT()******************************************************
+*Encoderli DC motorlarda bulunan encoderlerin kesme girisleri pin2
+ve pin3'e baglanmistir.
+*Bu metotda kesme icin gerekli ayarlamalar yapilmaktadir.
+*/
+void initINT()
+{
+	//Pin 2 ve 3 giris olarak ayarlandi
+	DDRD &= ~(1 << 2);
+	DDRD &= ~(1 << 3);
+	//Pin 2 ve 3 pullup
+	PORTD |= (1 << 2);
+	PORTD |= (1 << 3);
+	//Int0 ve Int1 icin dusen kenar tetiklemesi
+	EICRA |= (1 << ISC01);
+	EICRA |= (1 << ISC11);
+	//Int0 ve Int1 aktif edildi
+	EIMSK |= (1<< INT0);
+	EIMSK |= (1<< INT1);
+	//global kesme aktif et
+	sei();
 }
