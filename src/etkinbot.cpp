@@ -64,11 +64,11 @@ ISR(INT0_vect)
 
 			if (motor_speed > motor_speed1)
 			{
-			  Setpoint = map(motor_speed1, 0, 420, 0, 1023);
+			  SetpointMotor1 = map(motor_speed1, 0, 420, 0, 1023);
 			}
 			else
 			{
-			  Setpoint = motor_speed_theoric;
+			  SetpointMotor1 = motor_speed_theoric;
 			}
     	}
 		counter = 0;
@@ -98,11 +98,11 @@ ISR(INT1_vect)
 
 			if (motor_speed1 > motor_speed)
 			{
-			  Setpoint = map(motor_speed, 0, 420, 0, 1023);
+			  SetpointMotor2= map(motor_speed, 0, 420, 0, 1023);
 			}
 			else
 			{
-			  Setpoint = motor_speed_theoric;
+			  SetpointMotor2 = motor_speed_theoric;
 			}
     	}
 		counter1 = 0;
@@ -256,6 +256,7 @@ void EtkinClass::move(int direction, int speed){
 void EtkinClass::movePid(uint8_t direction, int speed, int distance)
 {
 
+	motor_speed_theoric = 800;
 	Setpoint = motor_speed_theoric;
 	Setpoint1 = motor_speed_theoric;
 	EtkinClass::move(direction, speed)
@@ -265,15 +266,15 @@ void EtkinClass::movePid(uint8_t direction, int speed, int distance)
 
 	while (1)
   {
-    Input1 = map(motor_speed1, 0, 420, 0, 1023);
-    Input = map(motor_speed, 0, 420, 0, 1023);
+    InputMotor1 = map(motor_speed1, 0, 420, 0, 1023);
+    InputMotor2 = map(motor_speed, 0, 420, 0, 1023);
     myPID1->Compute();
     myPID2->Compute();
 
 
     pwmWriteDistance(Output, Output1, direction, (distance / 2.953));
     speed_control();
-		if(Output1 == 0 && Output == 0)
+		if(Output1 < 80 && Output < 80)
 		{
 			break;
 		}
