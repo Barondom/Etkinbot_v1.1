@@ -332,3 +332,11 @@ void initINT()
 	//global kesme aktif et
 	sei();
 }
+
+/*pwmWriteDistance()*****************************************
+*PID fonksiyonun ciktilarini motorlara pwm sinyalini verir
+*/
+void pwmWriteDistance()
+{
+
+}
