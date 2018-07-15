@@ -32,15 +32,65 @@ arge@etkinketnolojiler.com
 
 //pid eklenecek
 
-
+//#include<avr/interrupt.h>
 #include "etkinbot.h"
 
 
-int counter=0, counter1=0;
+int counter =0, counter1 = 0;
 double timer0, timer1, timer2, timer3, timer4, timer5;
 double timer6, timer7;
-double motor_speed=0, motor_speed1=0;
+double motor_speed = 0, motor_speed1 = 0;
 int motor_speed_theoric;
+void stop(bool urgentStop);
+void pwmWriteDistance_1(int out, int dir, int dist);
+void pwmWriteDistance_2(int out, int dir, int dist);
+void initINT();
+int distance1 = 0, distance2 = 0;
+double InputMotor1,OutputMotor1,SetpointMotor1, Kp, Ki, Kd, InputMotor2,OutputMotor2,SetpointMotor2;
+
+EtkinClass::EtkinClass(){
+	trig = 13;
+	echo = 12;
+	motor1_dir = 16;
+	motor2_dir = 4;
+	motor1_pwm = 10;
+	motor2_pwm = 11;
+	rgb_red = 6;
+	rgb_green = 5;
+	rgb_blue = 9;
+	cny70_R = A6;
+	cny70_L = A3;
+
+
+	pinMode(motor1_dir, OUTPUT); //cizildi
+	pinMode(motor2_dir, OUTPUT); //cizildi blue rgb
+	pinMode(motor1_pwm, OUTPUT); //cizildi
+	pinMode(motor2_pwm, OUTPUT); //cizildi green rgb
+	pinMode(rgb_red, OUTPUT); //cizildi red rgb
+	pinMode(rgb_green, OUTPUT); //cizildi
+	pinMode(rgb_blue, OUTPUT); //cizildi
+
+	Kp = 0.002;
+	Ki = 3;
+	Kd = 0.001;
+
+	myPID1 = new PID(&InputMotor1, &OutputMotor1, &SetpointMotor1, Kp, Ki, Kd, DIRECT);
+	myPID2 = new PID(&InputMotor2, &OutputMotor2, &SetpointMotor2, Kp, Ki, Kd, DIRECT);
+
+	myPID1->SetMode(AUTOMATIC);
+	myPID2->SetMode(AUTOMATIC);
+
+	myPID1->SetOutputLimits(0, 255);
+	myPID2->SetOutputLimits(0, 255);
+
+	sei();
+	level = 0;
+	distance = 0;
+	duration = 0;
+	line_left = 0;
+	line_right = 0;
+
+}
 
 ISR(INT0_vect)
 {
@@ -91,10 +141,10 @@ ISR(INT1_vect)
     	if (timer3 > timer4)
     	{
       		timer5 = timer3 - timer4;
-			motor_speed = timer5 / 1000;
-			motor_speed = motor_speed1 / 1000;
-			motor_speed = 60 / motor_speed1;
-			motor_speed = motor_speed1 / 50;
+			motor_speed1 = timer5 / 1000;
+			motor_speed1 = motor_speed1 / 1000;
+			motor_speed1 = 60 / motor_speed1;
+			motor_speed1 = motor_speed1 / 50;
 
 			if (motor_speed1 > motor_speed)
 			{
@@ -108,49 +158,6 @@ ISR(INT1_vect)
 		counter1 = 0;
 		distance2++;
 	}
-}
-
-EtkinClass::EtkinClass(){
-	trig = 13;
-	echo = 12;
-	motor1_dir = 16;
-	motor2_dir = 4;
-	motor1_pwm = 10;
-	motor2_pwm = 11;
-	rgb_red = 6;
-	rgb_green = 5;
-	rgb_blue = 9;
-	cny70_R = A6;
-	cny70_L = A3;
-
-	pinMode(motor1_dir, OUTPUT); //cizildi
-	pinMode(motor2_dir, OUTPUT); //cizildi blue rgb
-	pinMode(motor1_pwm, OUTPUT); //cizildi
-	pinMode(motor2_pwm, OUTPUT); //cizildi green rgb
-	pinMode(rgb_red, OUTPUT); //cizildi red rgb
-	pinMode(rgb_green, OUTPUT); //cizildi
-	pinMode(rgb_blue, OUTPUT); //cizildi
-
-	Kp = 0.002;
-	Ki = 3;
-	Kd = 0.001;
-
-	myPID1 = new PID(&InputMotor1, &OutputMotor1, &SetpointMotor1, Kp, Ki, Kd, DIRECT);
-	myPID2 = new PID(&InputMotor2, &OutputMotor2, &SetpointMotor2, Kp, Ki, Kd, DIRECT);
-
-	myPID1->SetMode(AUTOMATIC);
-	myPID2->SetMode(AUTOMATIC);
-
-	myPID1->SetOutputLimits(AUTOMATIC);
-	myPID2->SetOutputLimits(AUTOMATIC);
-
-	sei();
-	level = 0;
-	distance = 0;
-	duration = 0;
-	line_left = 0;
-	line_right = 0;
-
 }
 
 /* distancesensor()************************************************************
@@ -229,7 +236,8 @@ void EtkinClass::motor(int motor_id, int speed){
 	}
 }
 /*move()***********************************************************/
-void EtkinClass::move(int direction, int speed){
+void EtkinClass::move(int direction, int speed)
+{
 
 /*
 	direction = 1 --> ileri(forward)
@@ -237,47 +245,59 @@ void EtkinClass::move(int direction, int speed){
 	direction = 3 --> sola dön(left)
 	direction = 4 --> sağa dön(right)
 */
-	if (direction == 1){
-		digitalWrite(motor1_dir, HIGH);
-		digitalWrite(motor2_dir, HIGH);
-	}else if(direction == 2){
-		digitalWrite(motor1_dir, LOW);
-		digitalWrite(motor2_dir, LOW);
-	}else if(direction == 3){
-		digitalWrite(motor1_dir, LOW);
-		digitalWrite(motor2_dir, HIGH);
-	}else if(direction == 4){
+	if (direction == 1)
+	{
 		digitalWrite(motor1_dir, HIGH);
 		digitalWrite(motor2_dir, LOW);
+	}
+	else if(direction == 2)
+	{
+		digitalWrite(motor1_dir, LOW);
+		digitalWrite(motor2_dir, HIGH);
+	}
+	else if(direction == 3){
+
+		digitalWrite(motor1_dir, LOW);
+		digitalWrite(motor2_dir, LOW);
+	}
+	else if(direction == 4)
+	{
+		digitalWrite(motor1_dir, HIGH);
+		digitalWrite(motor2_dir, HIGH);
 	}
 	analogWrite(motor1_pwm, speed);
   	analogWrite(motor2_pwm, speed);
 }
+/*movePID()*************************************************************
+*move metodundan farkli olarak bu metod motorlarin hiz ve konum kontrolunu saglayarak dogrusal olarak hareket etmesi saglanmistir.
+*/
 void EtkinClass::movePid(uint8_t direction, int speed, int distance)
 {
 
-	motor_speed_theoric = 800;
-	Setpoint = motor_speed_theoric;
-	Setpoint1 = motor_speed_theoric;
-	EtkinClass::move(direction, speed)
+	motor_speed_theoric = map(speed, 0, 255, 0, 1023);
+	//SetpointMotor1 = motor_speed_theoric;
+	//SetpointMotor2 = motor_speed_theoric;
+	EtkinClass::move(direction, speed);
 	digitalWrite(rgb_red, LOW);
 	digitalWrite(rgb_green, LOW);
 	digitalWrite(rgb_blue, LOW);
 
 	while (1)
   {
-    InputMotor1 = map(motor_speed1, 0, 420, 0, 1023);
-    InputMotor2 = map(motor_speed, 0, 420, 0, 1023);
+    InputMotor1 = map(motor_speed, 0, 420, 0, 1023);
+    InputMotor2 = map(motor_speed1, 0, 420, 0, 1023);
     myPID1->Compute();
     myPID2->Compute();
 
-
-    pwmWriteDistance(Output, Output1, direction, (distance / 2.953));
+/*
+    pwmWriteDistance(Output1, direction, (distance / 2.953));
     speed_control();
+
 		if(Output1 < 80 && Output < 80)
 		{
 			break;
 		}
+*/
   }
 }
 
@@ -336,7 +356,63 @@ void initINT()
 /*pwmWriteDistance()*****************************************
 *PID fonksiyonun ciktilarini motorlara pwm sinyalini verir
 */
-void pwmWriteDistance()
+void EtkinClass::pwmWriteDistance_1(int out, int dir, int dist)
 {
+  if (distance1 < dist)
+  {
+    if (dir == 1)
+    {
+      digitalWrite(motor1_dir, HIGH);
+      analogWrite(motor1_pwm, out);
+    }
+    else if (dir == 2)
+    {
+      digitalWrite(motor1_dir, LOW);
+      analogWrite(motor1_pwm, out);
+    }
+  }
+  else
+  {
+    stop(0);
+  }
+}
 
+void EtkinClass::pwmWriteDistance_2(int out, int dir, int dist)
+{
+  if (distance2 < dist)
+  {
+    if (dir == 1)
+    {
+      digitalWrite(motor2_dir, LOW);
+      analogWrite(motor2_pwm, out);
+    }
+    else if (dir == 2)
+    {
+      digitalWrite(motor2_dir, HIGH);
+      analogWrite(motor2_pwm, out);
+    }
+  }
+  else
+  {
+    stop(0);
+  }
+}
+
+void EtkinClass::stop(bool urgentStop)
+{
+	digitalWrite(motor1_pwm, LOW);
+	digitalWrite(motor2_pwm, LOW);
+
+	if(urgentStop)
+	{
+		digitalWrite(rgb_red, HIGH);
+		digitalWrite(rgb_green, LOW);
+		digitalWrite(rgb_blue, LOW);
+	}
+	else
+	{
+		digitalWrite(rgb_red, LOW);
+		digitalWrite(rgb_green, HIGH);
+		digitalWrite(rgb_blue, LOW);
+	}
 }

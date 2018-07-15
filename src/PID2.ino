@@ -271,11 +271,3 @@ void stopp()
   digitalWrite(5, LOW);
   digitalWrite(6, HIGH);
 }
-
-
-
-
-
-
-
-
