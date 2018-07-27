@@ -11,7 +11,7 @@
   #include "WProgram.h"
 #endif
 
-#include <PID_v1.h>
+#include "PID_v1.h"
 
 /*Constructor (...)*********************************************************
  *    The parameters specified here are those for for which we can't set up
@@ -125,7 +125,7 @@ void PID::SetTunings(double Kp, double Ki, double Kd, int POn)
  * Set Tunings using the last-rembered POn setting
  ******************************************************************************/
 void PID::SetTunings(double Kp, double Ki, double Kd){
-    SetTunings(Kp, Ki, Kd, pOn); 
+    SetTunings(Kp, Ki, Kd, pOn);
 }
 
 /* SetSampleTime(...) *********************************************************
@@ -221,4 +221,3 @@ double PID::GetKi(){ return  dispKi;}
 double PID::GetKd(){ return  dispKd;}
 int PID::GetMode(){ return  inAuto ? AUTOMATIC : MANUAL;}
 int PID::GetDirection(){ return controllerDirection;}
-
