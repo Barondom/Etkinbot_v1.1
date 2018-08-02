@@ -24,14 +24,53 @@
 				"loop":""
 			}
 		],
-
+		[
+			"w",
+			"PID %d.dist mm %m.direction at speed %d.motorvalue",
+			"directionsDist",
+			"0",
+			"run forward",
+			"0",
+			{
+				"encode":"{s0}{d0}{s1}",
+				"setup":"",
+				"inc":"#include \"etkinbot.h\"\n",
+				"def":"EtkinClass etkinbot;\n",
+				"work":"etkinbot.movePid({1},{2},{0});\n",
+				"loop":""
+			}
+		],
+		[
+			"w",
+			"turn right 90 degree",
+			"beeright",
+			{
+				"setup":"",
+				"inc":"#include \"etkinbot.h\"\n",
+				"def":"EtkinClass etkinbot;\n",
+				"work":"etkinbot.movePid(4, 255, 55);\ndelay(500);\n",
+				"loop":""
+			}
+		],
+		[
+			"w",
+			"turn left 90 degree",
+			"beeleft",
+			{
+				"setup":"",
+				"inc":"#include \"etkinbot.h\"\n",
+				"def":"EtkinClass etkinbot;\n",
+				"work":"etkinbot.movePid(3, 255, 55);\ndelay(500);\n",
+				"loop":""
+			}
+		],
 		[
 			"R",
 			"Temperature Value",
 			"gettemp",
 			{
 				"setup":"dht.begin();\n",
-				"inc":"#include \"DHT.h\"",
+				"inc":"#include \"DHT.h\"\n",
 				"def":"DHT dht(12, DHT11);\n",
 				"work":"dht.readTemperature()",
 				"loop":""
@@ -263,6 +302,7 @@
 		"pinmode":["INPUT","OUTPUT"],
 		"direction":["run forward","run backward","turn right","turn left"],
 		"motorvalue":[255,230,210,200,100,0],
+		"dist":[1000,500,250,100,50],
 		"motorPort":["Motor1","Motor2"],
 		"motorspeed":[255,230,210,200,100,0,-100,-200,-210,-230,-255],
 		"buttonstate":["pressed","released"],
@@ -337,7 +377,13 @@
 			"Humidity Value":"Nem Değeri",
 			"Clear Screen":"Ekranı Temizle",
 			"rightjoy":"sağ","leftjoy":"sol","forward":"geri","back":"ileri",
-			"pir sensor motion %d.hareket":"Hareket sensöründe hareket %d.hareket"
+			"pir sensor motion %d.hareket":"Hareket sensöründe hareket %d.hareket",
+			"PID %d.dist mm %m.direction at speed %d.motorvalue":"PID %d.dist mm %m.direction hızı %d.motorvalue yap",
+			"one step go":"Bir adım ilerle",
+			"one step back":"Bir adım geri git",
+			"turn right 90 degree":"Sağa 90 derece dön",
+			"turn left 90 degree":"Sola 90 derece dön"
+
 		}
 	}
 }

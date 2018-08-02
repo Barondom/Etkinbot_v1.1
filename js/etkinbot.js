@@ -21,6 +21,18 @@
   ext.clearscreen = function(){
     device.send([0x22, 0x23])
   }
+  ext.beego = function(){
+    device.send([0x22, 0x23])
+  }
+  ext.beeback = function(){
+    device.send([0x22, 0x23])
+  }
+  ext.beeright = function(){
+    device.send([0x22, 0x23])
+  }
+  ext.beeleft = function(){
+    device.send([0x22, 0x23])
+  }
   ext.gettemp= function(){
     device.send([0x22, 0x23])
   }
@@ -47,6 +59,9 @@
 		device.send([0x22, 0x23])
 	}
   ext.directions = function(){
+    device.send([0x22, 0x23])
+  }
+  ext.directionsDist = function(){
     device.send([0x22, 0x23])
   }
   ext.getdistance = function(){
