@@ -200,7 +200,7 @@
 		],
 		[
 				"b",
-				"joystick right %m.joystate",
+				"joystick position %m.joystate",
 				"joyxr",
 				"rightjoy",
 				{
@@ -382,7 +382,8 @@
 			"one step go":"Bir adım ilerle",
 			"one step back":"Bir adım geri git",
 			"turn right 90 degree":"Sağa 90 derece dön",
-			"turn left 90 degree":"Sola 90 derece dön"
+			"turn left 90 degree":"Sola 90 derece dön",
+			"joystick position %m.joystate":"joystick konumu %m.joystate"
 
 		}
 	}
