@@ -24,6 +24,9 @@
   ext.beego = function(){
     device.send([0x22, 0x23])
   }
+  ext.joyxr = function(){
+    device.send([0x22, 0x23])
+  }
   ext.beeback = function(){
     device.send([0x22, 0x23])
   }
