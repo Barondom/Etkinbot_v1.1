@@ -104,6 +104,11 @@ ISR(INT0_vect)
 		{
 			motorReg = 0;
 			tone(8, 262, 500);
+			analogWrite(motor1_pwm, 0);
+			analogWrite(motor2_pwm, 0);
+			digitalWrite(rgb_red, HIGH);
+			digitalWrite(rgb_green, LOW);
+			digitalWrite(rgb_blue, LOW);
 		}
 	}
 }
@@ -156,6 +161,11 @@ ISR(INT1_vect)
 		{
 			motorReg = 0;
 			tone(8, 262, 500);
+			analogWrite(motor1_pwm, 0);
+			analogWrite(motor2_pwm, 0);
+			digitalWrite(rgb_red, HIGH);
+			digitalWrite(rgb_green, LOW);
+			digitalWrite(rgb_blue, LOW);
 		}
 	}
 }
