@@ -95,7 +95,7 @@ ISR(INT0_vect)
 	if(digitalRead(7) == 1)
 	{
 
-		if(firstTime == 1;)
+		if(firstTime == 1)
 		{
 			buttonTimer = millis();
 			firstTime = 0;
@@ -143,7 +143,7 @@ ISR(INT1_vect)
 	if(digitalRead(7) == 1)
 	{
 
-		if(firstTime == 1;)
+		if(firstTime == 1)
 		{
 			buttonTimer = millis();
 			firstTime = 0;
