@@ -51,12 +51,15 @@ int distancein = 0;
 double InputMotor1,OutputMotor1,SetpointMotor1, InputMotor2,OutputMotor2,SetpointMotor2;
 double Kp, Ki, Kd;
 bool one_loop=0;
-
+bool motorReg = 1;
+bool firstTime = 1;
+int buttonTimer = 0;
 //************************************************************
 //Interrupt 1
 //************************************************************
 ISR(INT0_vect)
 {
+
 	timer0 = micros();
 
 	if (counter == 0)
@@ -88,6 +91,16 @@ ISR(INT0_vect)
 		}
 		counter = 0;
 		distance1++;
+	}
+	if(digitalRead(7) == 1)
+	{
+
+		if(firstTime == 1;)
+		{
+			buttonTimer = millis();
+			firstTime = 0;
+		}
+		if((buttonTimer - millis()) <= 3000) motorReg = 0;
 	}
 }
 //************************************************************
@@ -127,6 +140,16 @@ ISR(INT1_vect)
     counter1 = 0;
     distance2++;
   }
+	if(digitalRead(7) == 1)
+	{
+
+		if(firstTime == 1;)
+		{
+			buttonTimer = millis();
+			firstTime = 0;
+		}
+		if((buttonTimer - millis()) <= 3000) motorReg = 0;
+	}
 }
 
 EtkinClass::EtkinClass(){
@@ -263,28 +286,36 @@ void EtkinClass::move(int direction, int speed)
 	direction = 3 --> sola dön(left)
 	direction = 4 --> sağa dön(right)
 */
-	if (direction == 1)
+	if(motorReg == 1)
 	{
-		digitalWrite(motor1_dir, HIGH);
-		digitalWrite(motor2_dir, LOW);
-	}
-	else if(direction == 2)
-	{
-		digitalWrite(motor1_dir, LOW);
-		digitalWrite(motor2_dir, HIGH);
-	}
-	else if(direction == 3){
+		if (direction == 1)
+		{
+			digitalWrite(motor1_dir, HIGH);
+			digitalWrite(motor2_dir, LOW);
+		}
+		else if(direction == 2)
+		{
+			digitalWrite(motor1_dir, LOW);
+			digitalWrite(motor2_dir, HIGH);
+		}
+		else if(direction == 3){
 
-		digitalWrite(motor1_dir, LOW);
-		digitalWrite(motor2_dir, LOW);
+			digitalWrite(motor1_dir, LOW);
+			digitalWrite(motor2_dir, LOW);
+		}
+		else if(direction == 4)
+		{
+			digitalWrite(motor1_dir, HIGH);
+			digitalWrite(motor2_dir, HIGH);
+		}
+		analogWrite(motor1_pwm, speed);
+	  	analogWrite(motor2_pwm, speed);
 	}
-	else if(direction == 4)
+	else
 	{
-		digitalWrite(motor1_dir, HIGH);
-		digitalWrite(motor2_dir, HIGH);
+		analogWrite(motor1_pwm, 0);
+		analogWrite(motor2_pwm, 0);
 	}
-	analogWrite(motor1_pwm, speed);
-  	analogWrite(motor2_pwm, speed);
 }
 /*movePID()*************************************************************
 *move metodundan farkli olarak bu metod motorlarin hiz ve konum kontrolunu
