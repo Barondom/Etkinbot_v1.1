@@ -100,7 +100,11 @@ ISR(INT0_vect)
 			buttonTimer = millis();
 			firstTime = 0;
 		}
-		if((millis() - buttonTimer) >= 3000) motorReg = 0;
+		if((millis() - buttonTimer) >= 3000)
+		{
+			motorReg = 0;
+			tone(8, 262, 500);
+		}
 	}
 }
 //************************************************************
@@ -148,7 +152,11 @@ ISR(INT1_vect)
 			buttonTimer = millis();
 			firstTime = 0;
 		}
-		if((millis() - buttonTimer) >= 3000) motorReg = 0;
+		if((millis() - buttonTimer) >= 3000)
+		{
+			motorReg = 0;
+			tone(8, 262, 500);
+		}
 	}
 }
 
@@ -315,6 +323,9 @@ void EtkinClass::move(int direction, int speed)
 	{
 		analogWrite(motor1_pwm, 0);
 		analogWrite(motor2_pwm, 0);
+		digitalWrite(rgb_red, HIGH);
+		digitalWrite(rgb_green, LOW);
+		digitalWrite(rgb_blue, LOW);
 	}
 }
 /*movePID()*************************************************************
