@@ -100,7 +100,7 @@ ISR(INT0_vect)
 			buttonTimer = millis();
 			firstTime = 0;
 		}
-		if((buttonTimer - millis()) >= 3000) motorReg = 0;
+		if((millis() - buttonTimer) >= 3000) motorReg = 0;
 	}
 }
 //************************************************************
@@ -148,7 +148,7 @@ ISR(INT1_vect)
 			buttonTimer = millis();
 			firstTime = 0;
 		}
-		if((buttonTimer - millis()) >= 3000) motorReg = 0;
+		if((millis() - buttonTimer) >= 3000) motorReg = 0;
 	}
 }
 
