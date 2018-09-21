@@ -212,21 +212,7 @@ EtkinClass::EtkinClass(){
 	duration = 0;
 	line_left = 0;
 	line_right = 0;
-	while(1)
-	{
-		if(digitalRead(7) == 1)
-		{
-			if(firstTime == 1)
-			{
-				buttonTimer = millis();
-				firstTime = 0;
-			}
-		if((millis() - buttonTimer) >= 3000)
-		{
-			break;
-		}
-		}
-	}
+
 }
 
 
@@ -320,6 +306,21 @@ void EtkinClass::move(int direction, int speed)
 */
 //	if(motorReg == 1)
 //	{
+while(1)
+	{
+		if(digitalRead(7) == 1)
+		{
+			if(firstTime == 1)
+			{
+				buttonTimer = millis();
+				firstTime = 0;
+			}
+		if((millis() - buttonTimer) >= 3000)
+		{
+			break;
+		}
+		}
+	}
 		if (direction == 1)
 		{
 			digitalWrite(motor1_dir, HIGH);
