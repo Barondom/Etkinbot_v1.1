@@ -92,25 +92,25 @@ ISR(INT0_vect)
 		counter = 0;
 		distance1++;
 	}
-	if(digitalRead(7) == 1)
-	{
-
-		if(firstTime == 1)
-		{
-			buttonTimer = millis();
-			firstTime = 0;
-		}
-		if((millis() - buttonTimer) >= 3000)
-		{
-			motorReg = 0;
-			tone(8, 262, 500);
-			analogWrite(10, 0);
-			analogWrite(11, 0);
-			digitalWrite(6, HIGH);
-			digitalWrite(5, LOW);
-			digitalWrite(9, LOW);
-		}
-	}
+//	if(digitalRead(7) == 1)
+//	{
+//
+//		if(firstTime == 1)
+//		{
+//			buttonTimer = millis();
+//			firstTime = 0;
+//		}
+//		if((millis() - buttonTimer) >= 3000)
+//		{
+//			motorReg = 0;
+//			tone(8, 262, 500);
+//			analogWrite(10, 0);
+//			analogWrite(11, 0);
+//			digitalWrite(6, HIGH);
+//			digitalWrite(5, LOW);
+//			digitalWrite(9, LOW);
+//		}
+//	}
 }
 //************************************************************
 //Interrupt 2
@@ -149,25 +149,25 @@ ISR(INT1_vect)
     counter1 = 0;
     distance2++;
   }
-	if(digitalRead(7) == 1)
-	{
-
-		if(firstTime == 1)
-		{
-			buttonTimer = millis();
-			firstTime = 0;
-		}
-		if((millis() - buttonTimer) >= 3000)
-		{
-			motorReg = 0;
-			tone(8, 262, 500);
-			analogWrite(10, 0);
-			analogWrite(11, 0);
-			digitalWrite(6, HIGH);
-			digitalWrite(5, LOW);
-			digitalWrite(9, LOW);
-		}
-	}
+//	if(digitalRead(7) == 1)
+//	{
+//
+//		if(firstTime == 1)
+//		{
+//			buttonTimer = millis();
+//			firstTime = 0;
+//		}
+//		if((millis() - buttonTimer) >= 3000)
+//		{
+//			motorReg = 0;
+//			tone(8, 262, 500);
+//			analogWrite(10, 0);
+//			analogWrite(11, 0);
+//			digitalWrite(6, HIGH);
+//			digitalWrite(5, LOW);
+//			digitalWrite(9, LOW);
+//		}
+//	}
 }
 
 EtkinClass::EtkinClass(){
@@ -212,7 +212,21 @@ EtkinClass::EtkinClass(){
 	duration = 0;
 	line_left = 0;
 	line_right = 0;
-
+	while(1)
+	{
+		if(digitalRead(7) == 1)
+		{
+			if(firstTime == 1)
+			{
+				buttonTimer = millis();
+				firstTime = 0;
+			}
+		if((millis() - buttonTimer) >= 3000)
+		{
+			break;
+		}
+		}
+	}
 }
 
 
@@ -304,8 +318,8 @@ void EtkinClass::move(int direction, int speed)
 	direction = 3 --> sola dön(left)
 	direction = 4 --> sağa dön(right)
 */
-	if(motorReg == 1)
-	{
+//	if(motorReg == 1)
+//	{
 		if (direction == 1)
 		{
 			digitalWrite(motor1_dir, HIGH);
@@ -328,15 +342,15 @@ void EtkinClass::move(int direction, int speed)
 		}
 		analogWrite(motor1_pwm, speed);
 	  	analogWrite(motor2_pwm, speed);
-	}
-	else
-	{
-		analogWrite(motor1_pwm, 0);
-		analogWrite(motor2_pwm, 0);
-		digitalWrite(rgb_red, HIGH);
-		digitalWrite(rgb_green, LOW);
-		digitalWrite(rgb_blue, LOW);
-	}
+//	}
+//	else
+//	{
+//		analogWrite(motor1_pwm, 0);
+//		analogWrite(motor2_pwm, 0);
+//		digitalWrite(rgb_red, HIGH);
+//		digitalWrite(rgb_green, LOW);
+//		digitalWrite(rgb_blue, LOW);
+//	}
 }
 /*movePID()*************************************************************
 *move metodundan farkli olarak bu metod motorlarin hiz ve konum kontrolunu
