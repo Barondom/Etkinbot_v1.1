@@ -169,7 +169,7 @@
 			  "encode":"{s0,s1}",
 				"setup":"lcd.init();\nlcd.clear();\nlcd.backlight();\n",
 				"inc":"#include \"LiquidCrystal_I2C.h\"\n",
-				"def":"LiquidCrystal_I2C lcd(0x27,16,2);\n",
+				"def":"LiquidCrystal_I2C lcd(0x3f,16,2);\n",
 				"work":"lcd.setCursor(0,0);\nlcd.print({0});\nlcd.setCursor(0,1);\nlcd.print({1});\n",
 				"loop":""
 			}
